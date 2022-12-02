@@ -1,13 +1,11 @@
-use std::{fs, io::Error};
+use std::fs;
 
-fn main() -> Result<(), Error> {
-    let input = fs::read_to_string("input.txt")?;
+fn main() {
+    let input = fs::read_to_string("input.txt").unwrap();
     let input = input.split('\n').collect::<Vec<_>>();
 
     println!("{}", puzzle_one(&input));
     println!("{}", puzzle_two(&input));
-
-    Ok(())
 }
 
 fn puzzle_one(input: &[&str]) -> i32 {
