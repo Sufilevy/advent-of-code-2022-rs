@@ -11,14 +11,14 @@ fn main() {
 }
 
 fn puzzle_one(input: &str) -> String {
-    let [stacks, instructions] = input.split("\n\n").collect::<Vec<_>>()[..] else { panic!("What...") };
+    let [stacks, instructions] = input.split("\r\n\r\n").collect::<Vec<_>>()[..] else { panic!("What...") };
     let mut supplies = Supplies::from(stacks);
     supplies.execute_instructions_9000(instructions);
     supplies.get_top()
 }
 
 fn puzzle_two(input: &str) -> String {
-    let [stacks, instructions] = input.split("\n\n").collect::<Vec<_>>()[..] else { panic!("Hmph.") };
+    let [stacks, instructions] = input.split("\r\n\r\n").collect::<Vec<_>>()[..] else { panic!("Hmph.") };
     let mut supplies = Supplies::from(stacks);
     supplies.execute_instructions_9001(instructions);
     supplies.get_top()

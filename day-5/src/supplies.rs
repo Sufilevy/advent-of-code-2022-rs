@@ -17,7 +17,7 @@ impl Supplies {
                 .enumerate()
                 .for_each(|(index, e)| match e {
                     [' ', ' ', ' ', ' '] => {}
-                    [_, c, _, _] => stacks[index].push(*c),
+                    ['[', c, ']', ' '] => stacks[index].push(*c),
                     _ => {}
                 })
         });
@@ -28,7 +28,7 @@ impl Supplies {
     pub fn execute_instructions_9000(&mut self, instructions: &str) {
         instructions.lines().for_each(|line| {
             let parts = line.split_whitespace().collect::<Vec<_>>();
-            let [_, amount, _, from, _, to] = parts[..] else { panic!("Well") };
+            let ["move", amount, "from", from, "to", to] = parts[..] else { panic!("Well") };
 
             let (amount, from, to) = (
                 amount.parse::<usize>().unwrap(),
@@ -46,7 +46,7 @@ impl Supplies {
     pub fn execute_instructions_9001(&mut self, instructions: &str) {
         instructions.lines().for_each(|line| {
             let parts = line.split_whitespace().collect::<Vec<_>>();
-            let [_, amount, _, from, _, to] = parts[..] else { panic!("Huh...") };
+            let ["move", amount, "from", from, "to", to] = parts[..] else { panic!("Huh...") };
 
             let (amount, from, to) = (
                 amount.parse::<usize>().unwrap(),
