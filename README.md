@@ -1,1 +1,1 @@
-Advent Of Code Challange 2022
+Advent Of Code Challange 2022 in Rust.
