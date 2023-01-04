@@ -39,6 +39,7 @@ pub struct Monkey {
     divisible_by: u32,
     monkey_a: u32,
     monkey_b: u32,
+    num_inspections: u32,
 }
 
 impl Monkey {
@@ -72,6 +73,11 @@ impl Monkey {
             divisible_by: Self::parse_test(lines[3]),
             monkey_a: Self::parse_target(lines[4]),
             monkey_b: Self::parse_target(lines[5]),
+            num_inspections: 0,
         }
+    }
+
+    pub fn num_inspections(&self) -> u32 {
+        self.num_inspections
     }
 }
