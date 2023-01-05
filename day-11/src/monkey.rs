@@ -1,7 +1,7 @@
 #[derive(Debug)]
 enum Target {
     Old,
-    Num(u32),
+    Num(u64),
 }
 
 impl Target {
@@ -9,7 +9,7 @@ impl Target {
         if input == "old" {
             Self::Old
         } else {
-            Self::Num(input.parse::<u32>().unwrap())
+            Self::Num(input.parse::<u64>().unwrap())
         }
     }
 }
@@ -31,7 +31,7 @@ impl Operation {
         }
     }
 
-    pub fn apply_to(&self, item: &mut u32) {
+    pub fn apply_to(&self, item: &mut u64) {
         let old = *item;
 
         let new = match self {
@@ -51,21 +51,21 @@ impl Operation {
 
 #[derive(Debug)]
 pub struct Monkey {
-    items: Vec<u32>,
+    items: Vec<u64>,
     operation: Operation,
-    divisible_by: u32,
-    monkey_a: u32,
-    monkey_b: u32,
-    num_inspections: u32,
+    divisible_by: u64,
+    monkey_a: u64,
+    monkey_b: u64,
+    num_inspections: u64,
 }
 
 impl Monkey {
-    fn parse_items(line: &str) -> Vec<u32> {
+    fn parse_items(line: &str) -> Vec<u64> {
         line.split_once(": ")
             .unwrap()
             .1
             .split(", ")
-            .map(|item| item.parse::<u32>().unwrap())
+            .map(|item| item.parse::<u64>().unwrap())
             .collect::<Vec<_>>()
     }
 
@@ -73,12 +73,12 @@ impl Monkey {
         Operation::from_str(line.split_once("= ").unwrap().1)
     }
 
-    fn parse_test(line: &str) -> u32 {
-        line.split_once("by ").unwrap().1.parse::<u32>().unwrap()
+    fn parse_test(line: &str) -> u64 {
+        line.split_once("by ").unwrap().1.parse::<u64>().unwrap()
     }
 
-    fn parse_target(line: &str) -> u32 {
-        line.split_once("key ").unwrap().1.parse::<u32>().unwrap()
+    fn parse_target(line: &str) -> u64 {
+        line.split_once("key ").unwrap().1.parse::<u64>().unwrap()
     }
 
     pub fn from_str(input: &str) -> Self {
@@ -94,8 +94,12 @@ impl Monkey {
         }
     }
 
+    pub fn divisible_by(&self) -> u64 {
+        self.divisible_by
+    }
+
     /// Returns the target monkey's index and the thrown item's worry level.
-    pub fn inspect_item(&mut self) -> Option<(usize, u32)> {
+    pub fn inspect_item(&mut self) -> Option<(usize, u64)> {
         if self.items.is_empty() {
             return None;
         }
@@ -114,11 +118,31 @@ impl Monkey {
         }
     }
 
-    pub fn add_item(&mut self, item: u32) {
+    /// Returns the target monkey's index and the thrown item's worry level.
+    pub fn inspect_item_calmly(&mut self, divisor: u64) -> Option<(usize, u64)> {
+        if self.items.is_empty() {
+            return None;
+        }
+        self.num_inspections += 1;
+
+        let mut item = self.items.remove(0);
+
+        self.operation.apply_to(&mut item); // Monkey inspects the item
+
+        item %= divisor; // Monkey gets bored
+
+        if item % self.divisible_by == 0 {
+            Some((self.monkey_a as usize, item))
+        } else {
+            Some((self.monkey_b as usize, item))
+        }
+    }
+
+    pub fn add_item(&mut self, item: u64) {
         self.items.push(item);
     }
 
-    pub fn num_inspections(&self) -> u32 {
+    pub fn num_inspections(&self) -> u64 {
         self.num_inspections
     }
 }
