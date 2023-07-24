@@ -1,2 +1,3 @@
-day-*/target
-day-9/.vscode
+day-*/target/
+day-*/.vscode/
+.vscode/

@@ -1,6 +1,7 @@
 mod climbing;
 
 use climbing::*;
+use rayon::prelude::*;
 use std::fs;
 
 fn main() {
@@ -14,7 +15,7 @@ fn main() {
 fn puzzle_one(input: &[&str]) -> u32 {
     let height_map = HeightMap::from_str(input);
     let mut paths = height_map.generate_paths();
-    paths.sort_by_key(|path| path.len());
+    paths.par_sort_by_key(|path| path.len());
     paths.first().unwrap().len() as u32
 }
 

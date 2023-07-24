@@ -1,4 +1,5 @@
 use ndarray::Array2;
+use rayon::prelude::*;
 
 type Position = (usize, usize);
 type Path = Vec<Position>;
@@ -108,16 +109,17 @@ impl HeightMap {
         match positions {
             PossiblePositions::End(end) => {
                 path.push(end);
-                println!("End");
+                println!("Reached the end-point!");
                 vec![path]
             }
             PossiblePositions::Positions(positions) => {
                 let positions: Vec<Position> = positions
                     .into_iter()
-                    .filter(|position| !path.contains(position))
+                    .filter(|position| !path.par_iter().any(|p| p == position))
                     .collect();
 
                 if positions.is_empty() {
+                    println!("Dead-end.");
                     return Vec::new();
                 }
 
@@ -135,7 +137,7 @@ impl HeightMap {
         let start = self.get_start();
 
         self.rec_generate_paths(Vec::new(), start)
-            .into_iter()
+            .into_par_iter()
             .map(|path| path[1..].to_vec())
             .collect()
     }
