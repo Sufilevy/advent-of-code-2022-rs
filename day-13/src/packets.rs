@@ -1,14 +1,18 @@
 use std::{ cmp::Ordering, slice::Iter };
 
-#[derive(Clone, Debug)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum PacketValue {
     Int(u32),
     List(Vec<PacketValue>),
 }
 
 impl PacketValue {
-    pub fn list(val: u32) -> Self {
+    pub fn list_int(val: u32) -> Self {
         Self::List(vec![Self::Int(val)])
+    }
+
+    pub fn list_list_int(val: u32) -> Self {
+        Self::List(vec![Self::list_int(val)])
     }
 }
 
@@ -24,7 +28,7 @@ pub fn parse_packets(input: &[&str]) -> Vec<PacketPair> {
         .collect()
 }
 
-fn parse_packet(input: &str) -> PacketValue {
+pub fn parse_packet(input: &str) -> PacketValue {
     if input.is_empty() {
         PacketValue::List(Vec::new())
     } else if input.starts_with('[') {
@@ -83,11 +87,11 @@ pub fn compare_packet_pair(pair: &PacketPair) -> Ordering {
     match pair {
         (PacketValue::Int(left), PacketValue::Int(right)) => left.cmp(right),
         (PacketValue::Int(left), PacketValue::List(_)) => {
-            let pair = (PacketValue::list(*left), pair.1.clone());
+            let pair = (PacketValue::list_int(*left), pair.1.clone());
             compare_packet_pair(&pair)
         }
         (PacketValue::List(_), PacketValue::Int(right)) => {
-            let pair = (pair.0.clone(), PacketValue::list(*right));
+            let pair = (pair.0.clone(), PacketValue::list_int(*right));
             compare_packet_pair(&pair)
         }
         (PacketValue::List(left), PacketValue::List(right)) =>

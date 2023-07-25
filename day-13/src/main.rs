@@ -1,10 +1,7 @@
-#![allow(unused)]
+mod packets;
 
 use std::{ fs, cmp::Ordering };
-
 use packets::*;
-
-mod packets;
 
 fn main() {
     let input = fs::read_to_string("input.txt").unwrap();
@@ -23,5 +20,29 @@ fn puzzle_one(input: &[&str]) -> usize {
 }
 
 fn puzzle_two(input: &[&str]) -> usize {
-    0
+    let mut packets: Vec<PacketValue> = input
+        .iter()
+        .flat_map(|pair| pair.split("\r\n"))
+        .map(parse_packet)
+        .collect();
+
+    let two = PacketValue::list_list_int(2);
+    let six = PacketValue::list_list_int(6);
+    packets.push(two.clone());
+    packets.push(six.clone());
+
+    packets.sort_by(|left, right| compare_packet_pair(&(left.clone(), right.clone())));
+
+    let two_index =
+        packets
+            .iter()
+            .position(|packet| *packet == two)
+            .unwrap() + 1;
+    let six_index =
+        packets
+            .iter()
+            .position(|packet| *packet == six)
+            .unwrap() + 1;
+
+    two_index * six_index
 }
