@@ -14,9 +14,11 @@ fn main() {
 
 fn puzzle_one(input: &[&str]) -> u32 {
     let mut sim = SandSimulation::from_lines(input);
-    sim.simulate_sand()
+    sim.simulate_sand_until_void()
 }
 
 fn puzzle_two(input: &[&str]) -> u32 {
-    0
+    let mut sim = SandSimulation::from_lines(input);
+    sim.set_floor();
+    sim.simulate_sand_until_safe()
 }

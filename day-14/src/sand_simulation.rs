@@ -8,12 +8,13 @@ pub struct SandSimulation {
 }
 
 impl SandSimulation {
-    const WIDTH: usize = 520;
+    const WIDTH: usize = 680;
     const HEIGHT: usize = 160;
     const ARRAY_LENGTH: usize = Self::WIDTH * Self::HEIGHT;
 
     const SAND_ORIGIN: Point = (500, 0);
     const VOID_HEIGHT: usize = 158;
+    const FLOOR_HEIGHT: usize = 158;
 
     fn new() -> Self {
         let cave = bitarr![0; SandSimulation::ARRAY_LENGTH];
@@ -85,7 +86,7 @@ impl SandSimulation {
         self.set(*path.last().unwrap(), true);
     }
 
-    pub fn simulate_sand(&mut self) -> u32 {
+    pub fn simulate_sand_until_void(&mut self) -> u32 {
         let mut num_particles = 0;
         loop {
             let mut sand = Self::SAND_ORIGIN;
@@ -109,6 +110,45 @@ impl SandSimulation {
                     sand.1 += 1;
                 } else {
                     // Rest
+                    self.set(sand, true);
+                    break;
+                }
+            }
+
+            num_particles += 1;
+        }
+    }
+
+    pub fn set_floor(&mut self) {
+        for x in 0..Self::WIDTH {
+            self.set((x, Self::FLOOR_HEIGHT), true);
+        }
+    }
+
+    pub fn simulate_sand_until_safe(&mut self) -> u32 {
+        let mut num_particles = 0;
+        loop {
+            let mut sand = Self::SAND_ORIGIN;
+
+            // Simulate falling
+            loop {
+                if !self.get((sand.0, sand.1 + 1)) {
+                    // Go down
+                    sand.1 += 1;
+                } else if !self.get((sand.0 - 1, sand.1 + 1)) {
+                    // Go down left
+                    sand.0 -= 1;
+                    sand.1 += 1;
+                } else if !self.get((sand.0 + 1, sand.1 + 1)) {
+                    // Go down right
+                    sand.0 += 1;
+                    sand.1 += 1;
+                } else {
+                    // Rest
+                    if sand == Self::SAND_ORIGIN {
+                        return num_particles + 1;
+                    }
+
                     self.set(sand, true);
                     break;
                 }
